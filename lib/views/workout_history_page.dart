@@ -6,6 +6,7 @@ import '../viewmodels/workout_history_viewmodel.dart';
 import '../viewmodels/performance_viewmodel.dart';
 import 'workout_details_page.dart';
 import 'workout_recording_page.dart';
+import 'performance_widget.dart';
 
 class WorkoutHistoryPage extends StatelessWidget {
   WorkoutHistoryPage({super.key});
@@ -24,23 +25,28 @@ class WorkoutHistoryPage extends StatelessWidget {
       body: workouts.isEmpty
           ? const Center(child: Text('No workouts recorded yet.'))
           : ListView.builder(
-        itemCount: workouts.length,
+        itemCount: workouts.length + 1,
         itemBuilder: (context, index) {
-          final workout = workouts[index];
+          if (index == 0) {
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: PerformanceWidget(),
+            );
+          }
+          // Adjust the index for workouts list.
+          final workout = workouts[index - 1];
           final dateString = _dateFormat.format(workout.date);
           final successfulCount =
               workout.results.where((r) => r.isSuccessful).length;
           final totalCount = workout.results.length;
           return ListTile(
             title: Text('Workout on $dateString'),
-            subtitle:
-            Text('$successfulCount of $totalCount successful'),
+            subtitle: Text('$successfulCount of $totalCount successful'),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      WorkoutDetailsPage(workout: workout),
+                  builder: (_) => WorkoutDetailsPage(workout: workout),
                 ),
               );
             },

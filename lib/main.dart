@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+// Existing imports
 import 'package:hwk3/service/database/entity/exercise_entity.dart';
 import 'package:hwk3/service/database/entity/workout_plan_entity.dart';
 import 'package:hwk3/service/database/dao/workout_plan_dao.dart';
@@ -13,24 +17,35 @@ import 'package:hwk3/viewmodels/performance_viewmodel.dart';
 import 'package:hwk3/viewmodels/workout_history_viewmodel.dart';
 import 'package:hwk3/viewmodels/workout_recording_viewmodel.dart';
 import 'package:hwk3/viewmodels/workout_plan_recording_viewmodel.dart';
-import 'package:hwk3/views/performance_widget.dart';
 import 'package:hwk3/views/workout_history_page.dart';
-import 'package:provider/provider.dart';
 
+// New imports for auth
+import 'package:hwk3/service/firebase/firebase_auth_service.dart';
+import 'package:hwk3/repository/auth_repository.dart';
+import 'package:hwk3/viewmodels/auth_viewmodel.dart';
+import 'package:hwk3/views/simple_login_view.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  // Initialize Firebase.
+  await Firebase.initializeApp();
+
+  // Initialize your Floor database.
+  final database =
+  await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   final workoutPlanDao = database.workoutPlanDao;
   final workoutDao = database.workoutDao;
 
+  // Insert default workout plans if needed.
   final existingPlans = await workoutPlanDao.findAllWorkoutPlans();
   if (existingPlans.isEmpty) {
     await _insertDefaultPlans(workoutPlanDao);
   }
 
   final workoutsDataSource = DatabaseWorkoutDataSource(workoutDao);
-  final workoutPlansDataSource = DatabaseWorkoutPlansDataSource(workoutPlanDao);
+  final workoutPlansDataSource =
+  DatabaseWorkoutPlansDataSource(workoutPlanDao);
+
   runApp(MyApp(
     workoutsDataSource: workoutsDataSource,
     workoutPlansDataSource: workoutPlansDataSource,
@@ -38,7 +53,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   final dynamic workoutsDataSource;
   final dynamic workoutPlansDataSource;
 
@@ -52,11 +66,25 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<RecordingWorkoutPlansRepository>(
-          create: (_) => RecordingWorkoutPlansRepository
-            (workoutPlansDataSource, ApiCallToRetrieveWorkoutFromWebsite()),
+        // Auth Providers
+        Provider<FirebaseAuthService>(
+          create: (_) => FirebaseAuthService(),
+        ),
+        Provider<AuthRepository>(
+          create: (context) =>
+              AuthRepository(context.read<FirebaseAuthService>()),
+        ),
+        ChangeNotifierProvider<AuthViewModel>(
+          create: (context) => AuthViewModel(context.read<AuthRepository>()),
         ),
 
+        // Existing providers for workout data.
+        Provider<RecordingWorkoutPlansRepository>(
+          create: (_) => RecordingWorkoutPlansRepository(
+            workoutPlansDataSource,
+            ApiCallToRetrieveWorkoutFromWebsite(),
+          ),
+        ),
         Provider<WorkoutHistoryRepository>(
           create: (_) => WorkoutHistoryRepository(workoutsDataSource),
         ),
@@ -66,7 +94,6 @@ class MyApp extends StatelessWidget {
             workoutsDataSource,
           ),
         ),
-
         ChangeNotifierProvider(
           create: (context) =>
               WorkoutHistoryViewModel(context.read<WorkoutHistoryRepository>()),
@@ -80,32 +107,29 @@ class MyApp extends StatelessWidget {
               PerformanceViewModel(context.read<WorkoutHistoryRepository>()),
         ),
         ChangeNotifierProvider(
-          create: (context) =>
-              WorkoutPlanRecordingViewmodel(context
-        .read<RecordingWorkoutPlansRepository>()),
-
+          create: (context) => WorkoutPlanRecordingViewmodel(
+              context.read<RecordingWorkoutPlansRepository>()),
         ),
-
       ],
       child: MaterialApp(
         builder: (context, child) {
           return SafeArea(
             child: Scaffold(
-              body: Column(
-                children: [
-                  const PerformanceWidget(),
-                  Expanded(child: child ?? const SizedBox.shrink()),
-                ],
-              ),
+              // Removed PerformanceWidget from here.
+              body: child ?? const SizedBox.shrink(),
             ),
           );
         },
-        home: WorkoutHistoryPage(),
+        // 1) Add this routes map:
+        routes: {
+          '/workoutHistory': (context) => WorkoutHistoryPage(),
+        },
+        // 2) Set your initial home:
+        home: const SimpleLoginView(),
       ),
     );
   }
 }
-
 
 Future<void> _insertDefaultPlans(WorkoutPlanDao dao) async {
   // Create a default "Beginner Mixed Plan"
@@ -133,7 +157,6 @@ Future<void> _insertDefaultPlans(WorkoutPlanDao dao) async {
       unit: 'seconds',
     ),
   ];
-
 
   await dao.insertFullWorkoutPlan(beginnerPlan, beginnerExercises);
 
