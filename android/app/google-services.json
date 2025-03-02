@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "71983413408",
+    "project_id": "workout-hwk",
+    "storage_bucket": "workout-hwk.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71983413408:android:66c587edf6615419d031c5",
+        "android_client_info": {
+          "package_name": "com.example.hwk3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0_Q9kHQH8k27mR7nOXKAGnGLSqzpVbaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

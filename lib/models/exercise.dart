@@ -10,7 +10,6 @@ class Exercise {
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
-
     final targetValue = json.containsKey('target')
         ? json['target'] as int
         : (json['targetOutput'] != null ? json['targetOutput'] as int : 0);
@@ -19,5 +18,13 @@ class Exercise {
       targetOutput: targetValue,
       unit: json['unit'] as String,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'targetOutput': targetOutput,
+      'unit': unit,
+    };
   }
 }

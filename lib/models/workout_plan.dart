@@ -17,6 +17,14 @@ class WorkoutPlan {
           .toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'exercises': exercises.map((exercise) => exercise.toJson()).toList(),
+    };
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
