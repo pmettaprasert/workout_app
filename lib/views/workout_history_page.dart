@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:hwk3/views/widget/fab_workout_menu.dart';
 
 import '../viewmodels/workout_history_viewmodel.dart';
 import '../viewmodels/performance_viewmodel.dart';
@@ -9,7 +10,7 @@ import 'workout_recording_page.dart';
 import 'performance_widget.dart';
 
 class WorkoutHistoryPage extends StatelessWidget {
-  WorkoutHistoryPage({super.key});
+  WorkoutHistoryPage({Key? key}) : super(key: key);
 
   final DateFormat _dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
@@ -33,7 +34,6 @@ class WorkoutHistoryPage extends StatelessWidget {
               child: PerformanceWidget(),
             );
           }
-          // Adjust the index for workouts list.
           final workout = workouts[index - 1];
           final dateString = _dateFormat.format(workout.date);
           final successfulCount =
@@ -53,18 +53,32 @@ class WorkoutHistoryPage extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
+      floatingActionButton: FabWorkoutMenu(
+        // 1) Solo workout
+        onSoloTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => const WorkoutRecordingPage()),
+            MaterialPageRoute(builder: (context) => const WorkoutRecordingPage()),
           ).then((_) {
+            // Refresh data
             context.read<WorkoutHistoryViewModel>().fetchWorkouts();
             context.read<PerformanceViewModel>().refreshPerformanceData();
           });
         },
-        child: const Icon(Icons.add),
+        // 2) Collaborative workout
+        onCollaborativeTap: () {
+          // TODO: Navigate to your collaborative workflow
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Collaborative tapped')),
+          );
+        },
+        // 3) Competitive workout
+        onCompetitiveTap: () {
+          // TODO: Navigate to your competitive workflow
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Competitive tapped')),
+          );
+        },
       ),
     );
   }
