@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/group_workout_session.dart';
 import '../viewmodels/group_workout_display_record_viewmodel.dart';
+import '../viewmodels/auth_viewmodel.dart';
+
+String truncateUserId(String userId) {
+  return userId.length > 6 ? '${userId.substring(0, 6)}...' : userId;
+}
 
 class CompetitiveWorkoutDetailsView extends StatefulWidget {
   final GroupWorkoutSession session;
@@ -34,6 +39,9 @@ class _CompetitiveWorkoutDetailsViewState
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<WorkoutViewModel>();
+    final authViewModel = context.watch<AuthViewModel>();
+    final currentUserId = authViewModel.user?.uid ?? "";
+
     // Use the updated session from the viewmodel if available.
     final currentSession = viewModel.sessionByInvite ?? widget.session;
     String formattedDate =
@@ -82,29 +90,30 @@ class _CompetitiveWorkoutDetailsViewState
                   style: const TextStyle(
                       fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text("Target: ${exercise.targetOutput} ${exercise.unit}"),
+                subtitle: Text(
+                    "Target: ${exercise.targetOutput} ${exercise.unit}"),
                 children: ranking.map((entry) {
                   int output = entry['output'];
                   // Compute rank based on sorted order.
-                  int rank = ranking.indexWhere(
-                          (e) => e['userId'] == entry['userId']) +
-                      1;
+                  int rank =
+                      ranking.indexWhere((e) => e['userId'] == entry['userId']) +
+                          1;
                   bool isSuccess = output >= exercise.targetOutput;
                   return ListTile(
-                    title: Text("User: ${truncateUserId(entry['userId'])}"),
-                    subtitle:
-                    Text("Rank: $rank of ${ranking.length}"),
+                    title: Text(
+                      entry['userId'] == currentUserId
+                          ? "You"
+                          : truncateUserId(entry['userId']),
+                    ),
+                    subtitle: Text("Rank: $rank of ${ranking.length}"),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text("$output ${exercise.unit}"),
                         const SizedBox(width: 8),
                         Icon(
-                          isSuccess
-                              ? Icons.check_circle
-                              : Icons.cancel,
-                          color:
-                          isSuccess ? Colors.green : Colors.red,
+                          isSuccess ? Icons.check_circle : Icons.cancel,
+                          color: isSuccess ? Colors.green : Colors.red,
                         ),
                       ],
                     ),
@@ -117,9 +126,4 @@ class _CompetitiveWorkoutDetailsViewState
       ),
     );
   }
-}
-
-
-String truncateUserId(String userId) {
-  return userId.length > 6 ? '${userId.substring(0, 6)}...' : userId;
 }

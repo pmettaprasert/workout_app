@@ -37,6 +37,10 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        selectedItemColor: Colors.black, // a darker color for selected items
+        unselectedItemColor: Colors.grey[300], // a darker grey for unselected
+        // items
+        backgroundColor: Colors.white, // background color
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.fitness_center),

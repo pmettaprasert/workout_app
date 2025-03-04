@@ -57,6 +57,11 @@ class WorkoutRecordingViewModel extends ChangeNotifier {
     await getAllPlans();
     notifyListeners();
   }
+  void clearSelectedPlan() {
+    _selectedPlan = null;
+    _actualOutputs.clear();
+    notifyListeners();
+  }
 
 
 }

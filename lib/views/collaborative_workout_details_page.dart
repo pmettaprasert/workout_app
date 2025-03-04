@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/group_workout_session.dart';
 import '../viewmodels/group_workout_display_record_viewmodel.dart';
+import '../viewmodels/auth_viewmodel.dart';
 
 class CollaborativeWorkoutDetailsView extends StatefulWidget {
   final GroupWorkoutSession session;
@@ -30,6 +31,8 @@ class _CollaborativeWorkoutDetailsViewState extends State<CollaborativeWorkoutDe
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<WorkoutViewModel>();
+    final authViewModel = context.watch<AuthViewModel>();
+    final currentUserId = authViewModel.user?.uid ?? "";
 
     // Use the updated session from the viewmodel if available; fall back to the constructor session otherwise.
     final currentSession = viewModel.sessionByInvite ?? widget.session;
@@ -80,7 +83,11 @@ class _CollaborativeWorkoutDetailsViewState extends State<CollaborativeWorkoutDe
                 children: currentSession.participants.map((participant) {
                   final participantOutput = participant.contributions[exercise.name] ?? 0;
                   return ListTile(
-                    title: Text("User: ${truncateUserId(participant.userId)}"),
+                    title: Text(
+                      participant.userId == currentUserId
+                          ? "You"
+                          : truncateUserId(participant.userId),
+                    ),
                     trailing: Text("$participantOutput ${exercise.unit}"),
                   );
                 }).toList(),
@@ -93,11 +100,6 @@ class _CollaborativeWorkoutDetailsViewState extends State<CollaborativeWorkoutDe
   }
 }
 
-
 String truncateUserId(String userId) {
-  if (userId.length <= 6) {
-    return userId;
-  } else {
-    return '${userId.substring(0, 6)}...';
-  }
+  return userId.length > 6 ? '${userId.substring(0, 6)}...' : userId;
 }

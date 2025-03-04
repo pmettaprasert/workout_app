@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart'; // For date formatting.
 import '../viewmodels/group_workout_display_record_viewmodel.dart';
 import 'collaborative_workout_details_page.dart';
 import 'competitive_workout_details_page.dart';
 import 'widget/fab_workout_menu.dart';
 import 'group_workout_recording_option_page.dart';
-
 
 class GroupWorkoutsView extends StatefulWidget {
   const GroupWorkoutsView({Key? key}) : super(key: key);
@@ -35,14 +35,15 @@ class _GroupWorkoutsViewState extends State<GroupWorkoutsView> {
     }
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+  // Formats both date and time, e.g. "3/3/2025 17:34".
+  String _formatDateTime(DateTime dateTime) {
+    final formatter = DateFormat('M/d/yyyy HH:mm');
+    return formatter.format(dateTime);
   }
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<WorkoutViewModel>(context);
-    print('Sessions length: ${viewModel.sessions.length}');
 
     // Filter and sort sessions into collaborative and competitive.
     final collaborativeSessions = viewModel.sessions
@@ -60,8 +61,8 @@ class _GroupWorkoutsViewState extends State<GroupWorkoutsView> {
         title: const Text(
           'Group Workouts',
           style: TextStyle(
-            fontSize: 25,           // Increase size as desired
-            fontWeight: FontWeight.bold,  // Make it bold
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
@@ -76,16 +77,18 @@ class _GroupWorkoutsViewState extends State<GroupWorkoutsView> {
                 child: Text(
                   'Collaborative Workouts',
                   style: TextStyle(
-                    fontSize: 20,           // Increase size as desired
-                    fontWeight: FontWeight.bold,  // Make it bold
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               ...collaborativeSessions.map((session) {
                 return ListTile(
-                  title: Text(
-                    'Collaborative Workout - ${_formatDate(session.createdAt)}',
+                  title: const Text('Collaborative Workout'),
+                  subtitle: Text(
+                    '${_formatDateTime(session.createdAt)} | Code: ${session.inviteCode}',
                   ),
+                  trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -107,16 +110,18 @@ class _GroupWorkoutsViewState extends State<GroupWorkoutsView> {
                 child: Text(
                   'Competitive Workouts',
                   style: TextStyle(
-                    fontSize: 20,           // Increase size as desired
-                    fontWeight: FontWeight.bold,  // Make it bold
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               ...competitiveSessions.map((session) {
                 return ListTile(
-                  title: Text(
-                    'Competitive Workout - ${_formatDate(session.createdAt)}',
+                  title: const Text('Competitive Workout'),
+                  subtitle: Text(
+                    '${_formatDateTime(session.createdAt)} | Code: ${session.inviteCode}',
                   ),
+                  trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.push(
                       context,

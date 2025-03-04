@@ -60,10 +60,17 @@ class _JoinGroupWorkoutPageState extends State<JoinGroupWorkoutPage> {
                 final code = _inviteCodeController.text.trim();
                 if (code.isNotEmpty) {
                   await viewModel.loadWorkoutSessionByInviteCode(code);
-                  // After loading, trigger rebuild.
-                  setState(() {
-                    _sessionLoaded = viewModel.sessionByInvite != null;
-                  });
+                  if (viewModel.sessionByInvite == null) {
+                    // If no session was loaded, show an error.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Invalid workout code. Please try again.")),
+                    );
+                  } else {
+                    // If a session is loaded, update local state to display the session.
+                    setState(() {
+                      _sessionLoaded = true;
+                    });
+                  }
                 }
               },
               child: const Text('Get Workout'),
