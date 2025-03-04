@@ -6,13 +6,11 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 ///  - Collaborative
 ///  - Competitive
 class FabWorkoutMenu extends StatelessWidget {
-  final VoidCallback onSoloTap;
   final VoidCallback onCollaborativeTap;
   final VoidCallback onCompetitiveTap;
 
   const FabWorkoutMenu({
     Key? key,
-    required this.onSoloTap,
     required this.onCollaborativeTap,
     required this.onCompetitiveTap,
   }) : super(key: key);
@@ -32,19 +30,14 @@ class FabWorkoutMenu extends StatelessWidget {
       childrenButtonSize: const Size(50.0, 50.0),
       children: [
         SpeedDialChild(
-          child: const Icon(Icons.person),
-          label: 'Solo Workout',
-          onTap: onSoloTap,
+          child: const Icon(Icons.sports_kabaddi),
+          label: 'Competitive Workout',
+          onTap: onCompetitiveTap,
         ),
         SpeedDialChild(
           child: const Icon(Icons.group),
           label: 'Collaborative Workout',
           onTap: onCollaborativeTap,
-        ),
-        SpeedDialChild(
-          child: const Icon(Icons.sports_kabaddi),
-          label: 'Competitive Workout',
-          onTap: onCompetitiveTap,
         ),
       ],
     );

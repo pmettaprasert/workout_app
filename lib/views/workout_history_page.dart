@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:hwk3/views/widget/fab_workout_menu.dart';
 
 import '../viewmodels/workout_history_viewmodel.dart';
 import '../viewmodels/performance_viewmodel.dart';
@@ -53,31 +52,18 @@ class WorkoutHistoryPage extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FabWorkoutMenu(
-        // 1) Solo workout
-        onSoloTap: () {
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const WorkoutRecordingPage()),
+            MaterialPageRoute(
+                builder: (context) => const WorkoutRecordingPage()),
           ).then((_) {
-            // Refresh data
+            // Refresh data after returning
             context.read<WorkoutHistoryViewModel>().fetchWorkouts();
             context.read<PerformanceViewModel>().refreshPerformanceData();
           });
-        },
-        // 2) Collaborative workout
-        onCollaborativeTap: () {
-          // TODO: Navigate to your collaborative workflow
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Collaborative tapped')),
-          );
-        },
-        // 3) Competitive workout
-        onCompetitiveTap: () {
-          // TODO: Navigate to your competitive workflow
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Competitive tapped')),
-          );
         },
       ),
     );

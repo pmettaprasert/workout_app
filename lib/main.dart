@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-// Existing imports
+// Existing imports for Floor database and local data sources.
 import 'package:hwk3/service/database/entity/exercise_entity.dart';
 import 'package:hwk3/service/database/entity/workout_plan_entity.dart';
 import 'package:hwk3/service/database/dao/workout_plan_dao.dart';
@@ -18,12 +18,18 @@ import 'package:hwk3/viewmodels/workout_history_viewmodel.dart';
 import 'package:hwk3/viewmodels/workout_recording_viewmodel.dart';
 import 'package:hwk3/viewmodels/workout_plan_recording_viewmodel.dart';
 import 'package:hwk3/views/workout_history_page.dart';
+import 'package:hwk3/views/home_page.dart';
 
-// New imports for auth
+// New imports for auth.
 import 'package:hwk3/service/firebase/firebase_auth_service.dart';
 import 'package:hwk3/repository/auth_repository.dart';
 import 'package:hwk3/viewmodels/auth_viewmodel.dart';
 import 'package:hwk3/views/simple_login_view.dart';
+
+// New imports for group workout.
+import 'package:hwk3/service/firebase/group_workout_session_data_source.dart';
+import 'package:hwk3/repository/group_workout_session_repository.dart';
+import 'package:hwk3/viewmodels/group_workout_display_record_viewmodel.dart'; // This is your new WorkoutViewModel.
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,7 +72,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Auth Providers
+        // Auth Providers.
         Provider<FirebaseAuthService>(
           create: (_) => FirebaseAuthService(),
         ),
@@ -110,6 +116,23 @@ class MyApp extends StatelessWidget {
           create: (context) => WorkoutPlanRecordingViewmodel(
               context.read<RecordingWorkoutPlansRepository>()),
         ),
+
+        // New Group Workout Providers.
+        Provider<GroupWorkoutSessionDataSource>(
+          create: (_) => GroupWorkoutSessionDataSource(),
+        ),
+        Provider<GroupWorkoutSessionRepository>(
+          create: (context) => GroupWorkoutSessionRepository(
+            dataSource: context.read<GroupWorkoutSessionDataSource>(),
+          ),
+        ),
+        ChangeNotifierProvider<WorkoutViewModel>(
+          create: (context) => WorkoutViewModel(
+            groupRepository: context.read<GroupWorkoutSessionRepository>(),
+            recordingRepository: context.read<RecordingWorkoutRepository>(),
+            authRepository: context.read<AuthRepository>(),
+          ),
+        ),
       ],
       child: MaterialApp(
         builder: (context, child) {
@@ -120,11 +143,12 @@ class MyApp extends StatelessWidget {
             ),
           );
         },
-        // 1) Add this routes map:
+        // Routes map.
         routes: {
+          '/home': (context) => const HomePage(),
           '/workoutHistory': (context) => WorkoutHistoryPage(),
         },
-        // 2) Set your initial home:
+        // Initial home.
         home: const SimpleLoginView(),
       ),
     );
@@ -132,7 +156,7 @@ class MyApp extends StatelessWidget {
 }
 
 Future<void> _insertDefaultPlans(WorkoutPlanDao dao) async {
-  // Create a default "Beginner Mixed Plan"
+  // Create a default "Beginner Mixed Plan".
   final beginnerPlan = WorkoutPlanEntity(id: null, name: 'Beginner Mixed Plan');
   final beginnerExercises = [
     ExerciseEntity(

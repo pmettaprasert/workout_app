@@ -50,7 +50,13 @@ class _WorkoutPlanHttpGetPageState extends State<WorkoutPlanHttpGetPage> {
               onPressed: () async {
                 final url = _urlController.text.trim();
                 if (url.isNotEmpty) {
-                  await viewModel.loadWorkoutPlanFromUrl(url);
+                  try {
+                    await viewModel.loadWorkoutPlanFromUrl(url);
+                  } catch (error) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to load workout plan: $error')),
+                    );
+                  }
                 }
               },
               child: const Text('Get Workout'),

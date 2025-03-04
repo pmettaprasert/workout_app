@@ -18,7 +18,7 @@ class SimpleLoginView extends StatelessWidget {
             body: Center(child: Text('Error: ${authViewModel.errorMessage}')),
           );
         } else if (authViewModel.user != null) {
-          // User is signed in anonymously.
+          // User is signed in.
           return Scaffold(
             appBar: AppBar(title: Text('Welcome')),
             body: Center(
@@ -28,11 +28,10 @@ class SimpleLoginView extends StatelessWidget {
                   Text('You are signed in anonymously!'),
                   Text('User ID: ${authViewModel.user!.uid}'),
                   SizedBox(height: 20),
-                  // In a real app, you might navigate to your main screen.
+                  // Navigate to HomePage with bottom navigation.
                   ElevatedButton(
                     onPressed: () {
-                      // For example, navigate to the WorkoutHistoryPage.
-                      Navigator.pushReplacementNamed(context, '/workoutHistory');
+                      Navigator.pushReplacementNamed(context, '/home');
                     },
                     child: Text('Proceed'),
                   ),
@@ -41,13 +40,12 @@ class SimpleLoginView extends StatelessWidget {
             ),
           );
         } else {
-          // Fallback UI, in case there's no user or an unexpected state.
+          // Fallback UI.
           return Scaffold(
             body: Center(
               child: ElevatedButton(
                 onPressed: () async {
                   await authViewModel.signInAnonymously();
-
                 },
                 child: Text('Login Anonymously'),
               ),
