@@ -40,7 +40,6 @@ class SimpleLoginView extends StatelessWidget {
             ),
           );
         } else {
-          // Fallback UI.
           return Scaffold(
             body: Center(
               child: ElevatedButton(

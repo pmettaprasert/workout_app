@@ -59,9 +59,7 @@ class _CollaborativeWorkoutDetailsViewState extends State<CollaborativeWorkoutDe
               ),
             ),
             const SizedBox(height: 16),
-            // For each exercise in the workout plan.
             ...currentSession.workoutPlan.exercises.map((exercise) {
-              // Calculate the combined output from all participants for this exercise.
               final combinedOutput = currentSession.participants.fold<int>(
                 0,
                     (prev, participant) => prev + (participant.contributions[exercise.name] ?? 0),

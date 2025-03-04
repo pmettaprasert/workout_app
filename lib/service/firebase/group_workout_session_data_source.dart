@@ -3,7 +3,6 @@ import '../../models/group_workout_session.dart';
 import '../../models/participant_contribution.dart';
 
 class GroupWorkoutSessionDataSource {
-  // You can adjust the collection name to your liking.
   static const String _collectionName = 'group_workout_sessions';
 
   final FirebaseFirestore _firestore;

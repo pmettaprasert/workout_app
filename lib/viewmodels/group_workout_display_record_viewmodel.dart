@@ -36,10 +36,6 @@ class WorkoutViewModel extends ChangeNotifier {
     required this.authRepository,
   });
 
-  // --------------------------
-  // Group Workout Session Methods
-  // --------------------------
-
   /// Fetches all group workout sessions for the given user.
   Future<void> fetchSessionsForUser(String userId) async {
     isLoadingSessions = true;
@@ -87,10 +83,6 @@ class WorkoutViewModel extends ChangeNotifier {
     }
   }
 
-  // --------------------------
-  // Workout Recording Methods
-  // --------------------------
-
   /// Returns all available workout plans.
   Future<List<WorkoutPlan>> getAllPlans() async {
     return await recordingRepository.getAllPlans();
@@ -121,11 +113,7 @@ class WorkoutViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Creates a new group workout session and records the workout.
-  ///
-  /// Generates a random invite code based on the first 3 characters of the userId
-  /// and two random alphanumeric characters. The [workoutType] is provided by the view.
-  /// It creates a new session in Firebase with the provided workout type and initial contributions.
+
   Future<String?> recordWorkout(String workoutType) async {
     final plan = _selectedPlan;
     if (plan == null) return null;
@@ -162,7 +150,7 @@ class WorkoutViewModel extends ChangeNotifier {
         createdAt: DateTime.now(),
         workoutPlan: plan,
         participants: [participant],
-        participantsIds: [user.uid], // <--- add the creator's ID here
+        participantsIds: [user.uid],
       );
 
       // Call the repository to create the session in Firestore.
@@ -174,9 +162,6 @@ class WorkoutViewModel extends ChangeNotifier {
     }
   }
 
-  /// Helper method to generate a random invite code.
-  ///
-  /// Takes the first 3 characters of [userId] and appends 2 random alphanumeric characters.
   String _generateInviteCode(String userId) {
     final prefix = userId.length >= 3 ? userId.substring(0, 3) : userId;
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

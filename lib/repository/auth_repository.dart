@@ -6,11 +6,10 @@ class AuthRepository {
 
   AuthRepository(this._authService);
 
-  // Expose sign in anonymously
   Future<User?> signInAnonymously() async {
     return await _authService.signInAnonymously();
   }
 
-  // Optionally, you can expose currentUser and other helper methods.
+
   User? get currentUser => _authService.currentUser;
 }

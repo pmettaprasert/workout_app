@@ -26,10 +26,10 @@ import 'package:hwk3/repository/auth_repository.dart';
 import 'package:hwk3/viewmodels/auth_viewmodel.dart';
 import 'package:hwk3/views/simple_login_view.dart';
 
-// New imports for group workout.
+
 import 'package:hwk3/service/firebase/group_workout_session_data_source.dart';
 import 'package:hwk3/repository/group_workout_session_repository.dart';
-import 'package:hwk3/viewmodels/group_workout_display_record_viewmodel.dart'; // This is your new WorkoutViewModel.
+import 'package:hwk3/viewmodels/group_workout_display_record_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

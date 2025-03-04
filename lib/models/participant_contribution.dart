@@ -1,6 +1,5 @@
 class ParticipantContribution {
   final String userId;
-  // Key: exerciseId (or exerciseName), Value: actualOutput
   final Map<String, int> contributions;
 
   ParticipantContribution({

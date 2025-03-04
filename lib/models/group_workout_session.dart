@@ -14,8 +14,6 @@ class GroupWorkoutSession {
   final DateTime createdAt;
   final WorkoutPlan workoutPlan;
   final List<ParticipantContribution> participants;
-
-  // New: store user IDs in an array for easy Firestore queries.
   final List<String> participantsIds;
 
   GroupWorkoutSession({

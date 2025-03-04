@@ -9,7 +9,6 @@ class GroupWorkoutRecordingOptionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Format the heading based on the workoutType.
     final heading = workoutType.toLowerCase() == 'competitive'
         ? 'Competitive Workout'
         : 'Collaborative Workout';
